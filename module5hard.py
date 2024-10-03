@@ -47,14 +47,18 @@ class UrTube:
                 return True
         print("Ошибка входа: неверный логин или пароль.")
         return False
+
     def register(self, nickname, password, age):
         '''Регистрирация нового пользователя и автоматическй вход'''
         new_user = User(nickname, password, age)
-        if new_user in self.users:
-            print(f"Пользователь {nickname} уже существует.")
-        else:
-            self.users.append(new_user)
-            self.current_user = new_user
+        for user in self.users:
+            if user.nickname == nickname:
+                print(f"Пользователь {nickname} уже существует")
+                return
+
+        self.users.append(new_user)
+        self.current_user = new_user
+
     def log_out(self):
         '''Выход из текущего пользователя'''
         if self.current_user:
@@ -62,10 +66,11 @@ class UrTube:
             self.current_user = None
         else:
             print("В системе нет активного пользователя.")
+
     def add(self, *videos):
         '''Добавление новых видео в список (если видео с этим названием ещё нет)'''
         for video in videos:
-            if video not in self.videos:
+            if not any(v.title == video.title for v in self.videos):
                 self.videos.append(video)
             else:
                 print(f"Видео '{video.title}' уже существует.")
